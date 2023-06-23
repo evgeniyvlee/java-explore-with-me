@@ -1,7 +1,8 @@
 package ru.practicum.server.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.server.model.EndpointHitMapper;
@@ -12,12 +13,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class StatsServiceImpl implements StatsService {
 
     private final StatsRepository statsRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<ViewStatsDto> getViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         List<ViewStats> viewStatsList;
@@ -29,6 +31,7 @@ public class StatsServiceImpl implements StatsService {
         return viewStatsList.stream().map(ViewStatsMapper::toViewStatsDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void createEndpointHit(EndpointHitDto endpointHitDto) {
         statsRepository.save(EndpointHitMapper.toEndpointHit(endpointHitDto));

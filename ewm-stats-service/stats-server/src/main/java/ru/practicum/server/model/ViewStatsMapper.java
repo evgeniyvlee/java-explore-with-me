@@ -1,13 +1,12 @@
 package ru.practicum.server.model;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.ViewStatsDto;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ViewStatsMapper {
 
-    public static ViewStatsDto toViewStatsDto(final ViewStats viewStats) {
+    public ViewStatsDto toViewStatsDto(final ViewStats viewStats) {
         return new ViewStatsDto(viewStats.getApp(), viewStats.getUri(), viewStats.getHits());
     }
 }
