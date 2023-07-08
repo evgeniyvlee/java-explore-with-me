@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.server.model.EndpointHit;
 import ru.practicum.server.model.EndpointHitMapper;
 import ru.practicum.server.model.ViewStats;
 import ru.practicum.server.model.ViewStatsMapper;
@@ -34,7 +35,8 @@ public class StatsServiceImpl implements StatsService {
     @Transactional
     @Override
     public void createEndpointHit(EndpointHitDto endpointHitDto) {
-        statsRepository.save(EndpointHitMapper.toEndpointHit(endpointHitDto));
+        EndpointHit endpointHit = statsRepository.save(EndpointHitMapper.toEndpointHit(endpointHitDto));
+        System.out.println("endpointHitDto = " + endpointHitDto);
     }
 }
 

@@ -32,12 +32,14 @@ public class StatsController {
 
     @GetMapping("/stats")
     public List<ViewStatsDto> get(
-            @RequestParam @DateTimeFormat(pattern = StatsConstants.DATE_TIME_PATTERN) LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = StatsConstants.DATE_TIME_PATTERN) LocalDateTime end,
-            @RequestParam(required = false) List<String> uris,
-            @RequestParam(defaultValue = "false") Boolean unique
+            @RequestParam(name = "start", required = false) @DateTimeFormat(pattern = StatsConstants.DATE_TIME_PATTERN) LocalDateTime start,
+            @RequestParam(name = "end", required = false) @DateTimeFormat(pattern = StatsConstants.DATE_TIME_PATTERN) LocalDateTime end,
+            @RequestParam(name = "uris", required = false) List<String> uris,
+            @RequestParam(name = "unique", defaultValue = "false") Boolean unique
     ) {
         log.debug(LoggingMessages.GET_VIEW_STATS.toString());
+        System.out.println("/getViewStats");
+        System.out.println("start = " + start + ", end = " + end + ", uris = " + uris + ", unique = " + unique);
         return service.getViewStats(start, end, uris, unique);
     }
 }
