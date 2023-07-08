@@ -115,7 +115,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public List<EventShortDto> search(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                       LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from,
-                                      Integer size) {
+                                      Integer size, HttpServletRequest request) {
         Pageable pageable = new PageSettings(from, size, EventRepository.SORT_EVENT_DATE_DESC);
         rangeStart = (rangeStart != null ? rangeStart : LocalDateTime.now());
         validateDateRange(rangeStart, rangeEnd);
@@ -133,6 +133,7 @@ public class EventServiceImpl implements EventService {
         if (sort == EventSort.VIEWS) {
             Collections.sort(eventShortDtoList, Comparator.comparing(EventShortDto::getViews));
         }
+        statsService.createHit(request);
         return eventShortDtoList;
     }
 

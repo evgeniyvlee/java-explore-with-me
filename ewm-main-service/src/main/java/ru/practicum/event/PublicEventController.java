@@ -37,10 +37,11 @@ public class PublicEventController {
             @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
             @RequestParam(value = "sort", required = false) EventSort sort,
             @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            HttpServletRequest request
     ) {
         log.debug(LoggingMessages.GET_ALL.toString());
-        return eventService.search(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        return eventService.search(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
     @GetMapping("{eventId}")

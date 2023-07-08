@@ -23,7 +23,7 @@ public interface EventService {
 
     List<EventShortDto> search(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from,
-                               Integer size);
+                               Integer size, HttpServletRequest request);
 
     EventFullDto getByEventId(Long eventId, HttpServletRequest request);
 }
