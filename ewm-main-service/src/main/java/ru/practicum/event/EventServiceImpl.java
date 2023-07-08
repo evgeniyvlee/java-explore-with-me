@@ -152,7 +152,6 @@ public class EventServiceImpl implements EventService {
         Long eventId = event.getId();
         Map<Long, Long> views = statsService.getViews(event.getPublishedOn(), LocalDateTime.now(),
                 List.of(eventId), true);
-        System.out.println("views = " + views);
         return views.get(eventId);
     }
 

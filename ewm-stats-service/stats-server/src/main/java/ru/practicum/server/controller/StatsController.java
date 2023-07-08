@@ -36,8 +36,6 @@ public class StatsController {
             @RequestParam(name = "unique", defaultValue = "false") Boolean unique
     ) {
         log.debug(LoggingMessages.GET_VIEW_STATS.toString());
-        System.out.println("/getViewStats");
-        System.out.println("start = " + start + ", end = " + end + ", uris = " + uris + ", unique = " + unique);
         return service.getViewStats(start, end, uris, unique);
     }
 }
