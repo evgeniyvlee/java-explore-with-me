@@ -16,14 +16,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UpdateEventRequest {
 
-    @Size(min = 20, message = ExceptionMessages.EVENT_ANNOTATION_TOO_SHORT)
-    @Size(max = 2000, message = ExceptionMessages.EVENT_ANNOTATION_TOO_LONG)
+    @Size(min = 20, max = 2000,  message = ExceptionMessages.EVENT_ANNOTATION_LENGTH_INVALID)
     private String annotation;
 
     private Long category;
 
-    @Size(min = 20, message = ExceptionMessages.EVENT_DESCRIPTION_TOO_SHORT)
-    @Size(max = 7000, message = ExceptionMessages.EVENT_DESCRIPTION_TOO_LONG)
+    @Size(min = 20, max = 7000, message = ExceptionMessages.EVENT_DESCRIPTION_LENGTH_INVALID)
     private String description;
 
     @JsonFormat(pattern = EwmServiceConstants.DATE_TIME_PATTERN)
@@ -39,7 +37,6 @@ public class UpdateEventRequest {
 
     private EventStateAction stateAction;
 
-    @Size(min = 3, message = ExceptionMessages.EVENT_TITLE_TOO_SHORT)
-    @Size(max = 120, message = ExceptionMessages.EVENT_TITLE_TOO_LONG)
+    @Size(min = 3, max = 120, message = ExceptionMessages.EVENT_TITLE_LENGTH_INVALID)
     private String title;
 }

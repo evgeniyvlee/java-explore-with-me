@@ -14,7 +14,6 @@ public class CategoryDto {
     private Long id;
 
     @NotBlank
-    @Size(min = 1, message = ExceptionMessages.CATEGORY_NAME_TOO_SHORT)
-    @Size(max = 50, message = ExceptionMessages.CATEGORY_NAME_TOO_LONG)
+    @Size(min = 1, max = 50, message = ExceptionMessages.CATEGORY_NAME_LENGTH_INVALID)
     private String name;
 }

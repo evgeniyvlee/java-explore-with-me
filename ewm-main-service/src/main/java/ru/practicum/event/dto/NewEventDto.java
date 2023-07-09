@@ -18,16 +18,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NewEventDto {
     @NotBlank
-    @Size(min = 20, message = ExceptionMessages.EVENT_ANNOTATION_TOO_SHORT)
-    @Size(max = 2000, message = ExceptionMessages.EVENT_ANNOTATION_TOO_LONG)
+    @Size(min = 20, max = 2000, message = ExceptionMessages.EVENT_ANNOTATION_LENGTH_INVALID)
     private String annotation;
 
     @NotNull
     private Long category;
 
     @NotBlank
-    @Size(min = 20, message = ExceptionMessages.EVENT_DESCRIPTION_TOO_SHORT)
-    @Size(max = 7000, message = ExceptionMessages.EVENT_DESCRIPTION_TOO_LONG)
+    @Size(min = 20, max = 7000, message = ExceptionMessages.EVENT_DESCRIPTION_LENGTH_INVALID)
     private String description;
 
     @NotNull
@@ -45,7 +43,6 @@ public class NewEventDto {
     private Boolean requestModeration = Boolean.TRUE;
 
     @NotBlank
-    @Size(min = 3, message = ExceptionMessages.EVENT_TITLE_TOO_SHORT)
-    @Size(max = 120, message = ExceptionMessages.EVENT_TITLE_TOO_LONG)
+    @Size(min = 3, max = 120,  message = ExceptionMessages.EVENT_TITLE_LENGTH_INVALID)
     private String title;
 }

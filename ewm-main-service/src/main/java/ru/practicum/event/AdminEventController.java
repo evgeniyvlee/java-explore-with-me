@@ -11,6 +11,8 @@ import ru.practicum.event.model.EventState;
 import ru.practicum.util.EwmServiceConstants;
 import ru.practicum.util.LoggingMessages;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,8 +34,8 @@ public class AdminEventController {
             @DateTimeFormat(pattern = EwmServiceConstants.DATE_TIME_PATTERN) LocalDateTime rangeStart,
             @RequestParam(value = "rangeEnd", required = false)
             @DateTimeFormat(pattern = EwmServiceConstants.DATE_TIME_PATTERN) LocalDateTime rangeEnd,
-            @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
         log.debug(LoggingMessages.SEARCH.toString());
         return eventService.search(users, states, categories, rangeStart, rangeEnd, from, size);

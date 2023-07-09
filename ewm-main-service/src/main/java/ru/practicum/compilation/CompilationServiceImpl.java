@@ -13,11 +13,13 @@ import ru.practicum.event.model.Event;
 import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.exception.ExceptionMessages;
 import ru.practicum.util.PageSettings;
+import ru.practicum.util.SortSettings;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CompilationServiceImpl implements CompilationService {
 
     private final  CompilationRepository compilationRepository;
@@ -25,7 +27,6 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
-    @Transactional
     public CompilationDto create(NewCompilationDto compilationDto) {
         List<Event> eventList = eventRepository.findByIdIn(compilationDto.getEvents());
         Compilation compilation =
@@ -34,7 +35,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public CompilationDto update(Long compId, UpdateCompilationRequest updatedCompilation) {
         Compilation compilation = getCompilationById(compId);
         updateCompilationFields(compilation, updatedCompilation);
@@ -42,22 +42,23 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public void delete(Long compId) {
         getCompilationById(compId);
         compilationRepository.deleteById(compId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompilationDto getById(Long compId) {
         Compilation compilation = getCompilationById(compId);
         return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompilationDto> get(Boolean pinned, Integer from, Integer size) {
         List<Compilation> compilationList;
-        Pageable pageable = new PageSettings(from, size, CompilationRepository.SORT_CATEGORY_ID_DESC);
+        Pageable pageable = new PageSettings(from, size, SortSettings.SORT_ID_DESC);
         if (pinned != null) {
             compilationList = compilationRepository.findByPinned(pinned, pageable);
         } else {
@@ -66,7 +67,6 @@ public class CompilationServiceImpl implements CompilationService {
         return compilationList.stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());
     }
 
-    @Transactional
     private void updateCompilationFields(Compilation compilation, UpdateCompilationRequest updatedCompilation) {
         Boolean pinned = updatedCompilation.getPinned();
         String title = updatedCompilation.getTitle();
@@ -85,7 +85,6 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
-    @Transactional(readOnly = true)
     private Compilation getCompilationById(Long compId) {
         return compilationRepository.findById(compId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.COMPILATION_NOT_FOUND));

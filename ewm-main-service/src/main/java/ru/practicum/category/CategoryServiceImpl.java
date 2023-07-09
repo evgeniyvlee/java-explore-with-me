@@ -11,18 +11,19 @@ import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.exception.ExceptionMessages;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.util.PageSettings;
+import ru.practicum.util.SortSettings;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
     private final EventRepository eventRepository;
 
-    @Transactional
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
         validate(categoryDto);
@@ -30,22 +31,21 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.toCategoryDto(category);
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto get(Long categoryId) {
         return CategoryMapper.toCategoryDto(getById(categoryId));
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAll(Integer from, Integer size) {
-        Pageable pageable = new PageSettings(from, size, CategoryRepository.SORT_CATEGORY_ID_DESC);
+        Pageable pageable = new PageSettings(from, size, SortSettings.SORT_ID_DESC);
         return categoryRepository.findAll(pageable).stream()
                 .map(CategoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
     public CategoryDto update(Long categoryId, CategoryDto categoryDto) {
         Category category = getById(categoryId);
@@ -56,7 +56,6 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.toCategoryDto(category);
     }
 
-    @Transactional
     @Override
     public void delete(Long categoryId) {
         getById(categoryId);
@@ -70,13 +69,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    @Transactional(readOnly = true)
     private Category getById(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private void validate(CategoryDto categoryDto) {
         if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
             throw new ValidationException(ExceptionMessages.CATEGORY_NAME_CONFLICT);

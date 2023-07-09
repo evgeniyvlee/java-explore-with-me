@@ -24,6 +24,8 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.util.LoggingMessages;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -46,8 +48,8 @@ public class PrivateEventController {
 
     @GetMapping
     public List<EventShortDto> getByUserId(@PathVariable Long userId,
-                                           @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                           @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                           @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                           @RequestParam(name = "size", defaultValue = "10") @Positive Integer size,
                                            HttpServletRequest request) {
         log.debug(LoggingMessages.GET.toString());
         return eventService.getByUserId(userId, from, size, request);

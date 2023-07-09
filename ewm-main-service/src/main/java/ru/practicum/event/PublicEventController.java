@@ -3,6 +3,7 @@ package ru.practicum.event;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,8 @@ import ru.practicum.event.model.EventSort;
 import ru.practicum.util.EwmServiceConstants;
 import ru.practicum.util.LoggingMessages;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @AllArgsConstructor
+@Validated
 public class PublicEventController {
 
     private final EventService eventService;
@@ -36,8 +40,8 @@ public class PublicEventController {
             @DateTimeFormat(pattern = EwmServiceConstants.DATE_TIME_PATTERN) LocalDateTime rangeEnd,
             @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable,
             @RequestParam(value = "sort", required = false) EventSort sort,
-            @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size,
             HttpServletRequest request
     ) {
         log.debug(LoggingMessages.GET_ALL.toString());

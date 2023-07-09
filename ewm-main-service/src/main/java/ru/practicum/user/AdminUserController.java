@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.util.LoggingMessages;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -29,8 +31,8 @@ public class AdminUserController {
 
     @GetMapping
     public List<UserDto> get(@RequestParam(name = "ids", required = false) Long[] userIds,
-                             @RequestParam(name = "from", defaultValue = "0") Integer from,
-                             @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                             @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                             @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.debug(LoggingMessages.GET.toString(), userIds);
         return userService.get(userIds, from, size);
     }

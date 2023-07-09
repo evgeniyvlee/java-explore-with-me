@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
@@ -46,7 +47,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public ParticipationRequestDto create(Long userId, Long eventId) {
         User user = getUserById(userId);
         Event event = getEventById(eventId);
@@ -56,7 +56,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public ParticipationRequestDto cancel(Long userId, Long requestId) {
         Request request = getRequestById(requestId);
         long requesterId = request.getRequester().getId();
@@ -70,6 +69,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getByUserIdAndEventId(Long userId, Long eventId) {
         return requestRepository.findByUserIdAndEventId(userId, eventId).stream()
                 .map(RequestMapper::toParticipationRequestDto)
@@ -138,13 +138,11 @@ public class RequestServiceImpl implements RequestService {
         return result;
     }
 
-    @Transactional(readOnly = true)
     private Request getRequestById(Long requestId) {
         return requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.REQUEST_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private void validate(User user, Event event) {
         long requesterId = user.getId();
         long initiatorId = event.getInitiator().getId();
@@ -171,13 +169,11 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    @Transactional(readOnly = true)
     private Event getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.EVENT_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.USER_NOT_FOUND));

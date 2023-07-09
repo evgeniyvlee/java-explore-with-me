@@ -19,7 +19,6 @@ public class NewCompilationDto {
     private Boolean pinned = Boolean.FALSE;
 
     @NotBlank
-    @Size(min = 1, message = ExceptionMessages.COMPILATION_TITLE_TOO_SHORT)
-    @Size(max = 50, message = ExceptionMessages.COMPILATION_TITLE_TOO_LONG)
+    @Size(min = 1, max = 50, message = ExceptionMessages.COMPILATION_TITLE_LENGTH_INVALID)
     private String title;
 }

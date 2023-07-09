@@ -22,6 +22,7 @@ import ru.practicum.stat.StatsService;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.util.PageSettings;
+import ru.practicum.util.SortSettings;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EventServiceImpl implements EventService {
 
     private final UserRepository userRepository;
@@ -46,7 +48,6 @@ public class EventServiceImpl implements EventService {
     private final StatsService statsService;
 
     @Override
-    @Transactional
     public EventFullDto create(Long userId, NewEventDto newEventDto) {
         User user = getUserById(userId);
         Category category = getCategoryById(newEventDto.getCategory());
@@ -57,7 +58,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getByUserId(Long userId, Integer from, Integer size, HttpServletRequest request) {
-        Pageable pageable = new PageSettings(from, size, EventRepository.SORT_EVENT_DATE_DESC);
+        Pageable pageable = new PageSettings(from, size, SortSettings.SORT_EVENT_DATE_DESC);
         List<EventShortDto> eventShortDtoList = eventRepository.findByInitiatorId(userId, pageable).stream()
                 .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
@@ -86,7 +87,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto update(Long userId, Long eventId, UpdateEventRequest updatedEvent) {
         User user = getUserById(userId);
         Event event = getEventById(eventId);
@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public List<EventFullDto> search(List<Long> initiatorIds, List<EventState> states, List<Long> categories,
                                       LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
-        Pageable pageable = new PageSettings(from, size, EventRepository.SORT_EVENT_DATE_DESC);
+        Pageable pageable = new PageSettings(from, size, SortSettings.SORT_EVENT_DATE_DESC);
         List<Event> events = eventRepository.search(initiatorIds, states, categories, rangeStart, rangeEnd, pageable);
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
         Map<Long, Long> views = getViews(events);
@@ -116,7 +116,7 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> search(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                       LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from,
                                       Integer size, HttpServletRequest request) {
-        Pageable pageable = new PageSettings(from, size, EventRepository.SORT_EVENT_DATE_DESC);
+        Pageable pageable = new PageSettings(from, size, SortSettings.SORT_EVENT_DATE_DESC);
         rangeStart = (rangeStart != null ? rangeStart : LocalDateTime.now());
         validateDateRange(rangeStart, rangeEnd);
 
@@ -138,7 +138,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto update(Long eventId, UpdateEventRequest updatedEvent) {
         Event event = getEventById(eventId);
         validate(event, updatedEvent);
@@ -146,6 +145,7 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(event);
     }
 
+    @Transactional(readOnly = true)
     private Long getViews(Event event) {
         if (event == null) return 0L;
 
@@ -155,7 +155,6 @@ public class EventServiceImpl implements EventService {
         return views.get(eventId);
     }
 
-    @Transactional(readOnly = true)
     private Map<Long, Long> getConfirmedRequests(List<Event> events) {
         if ((events == null) || (events.isEmpty())) return new HashMap<>();
 
@@ -179,13 +178,11 @@ public class EventServiceImpl implements EventService {
         return views;
     }
 
-    @Transactional(readOnly = true)
     private Event getEventByIdAndInitiatorId(Long eventId, Long initiatorId) {
         return eventRepository.findByIdAndInitiatorId(eventId, initiatorId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.EVENT_NOT_FOUND));
     }
 
-    @Transactional
     private void updateEventFields(Event event, UpdateEventRequest updatedEvent) {
         LocalDateTime eventDate = updatedEvent.getEventDate();
         if (eventDate != null) {
@@ -271,34 +268,30 @@ public class EventServiceImpl implements EventService {
 
         if ((updatedEvent.getStateAction() == EventStateAction.PUBLISH_EVENT)
                 && (event.getState() != EventState.PENDING)) {
-            throw new ValidationException("");
+            throw new ValidationException(ExceptionMessages.EVENT_NOT_PENDING_OR_CANCELED);
         }
 
         if ((updatedEvent.getStateAction() == EventStateAction.REJECT_EVENT)
                 && (event.getState() == EventState.PUBLISHED)) {
-            throw new ValidationException("");
+            throw new ValidationException(ExceptionMessages.EVENT_REJECTED_OR_PUBLISHED);
         }
     }
 
-    @Transactional(readOnly = true)
     private Event getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.EVENT_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private Event getEventByIdAndState(Long eventId, EventState state) {
         return eventRepository.findByIdAndState(eventId, state)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.EVENT_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException(ExceptionMessages.USER_NOT_FOUND));

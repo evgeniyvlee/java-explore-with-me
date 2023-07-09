@@ -51,7 +51,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable exception) {
         log.error(exception.getMessage());
-        exception.printStackTrace();
         return new ErrorResponse(exception.getMessage());
     }
 }
