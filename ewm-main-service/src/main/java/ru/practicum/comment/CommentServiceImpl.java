@@ -90,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void validateCommentAuthor(Long userId, Comment comment) {
-        if (userId != comment.getAuthor().getId()) {
+        if (!userId.equals(comment.getAuthor().getId())) {
             throw new ValidationException(ExceptionMessages.COMMENT_AUTHOR_WRONG);
         }
     }
