@@ -26,8 +26,8 @@ public class StatsClient {
                 .build();
     }
 
-    public ResponseEntity<Object> get(@Nullable Map<String, Object> parameters) {
-        return makeAndSendRequest(HttpMethod.GET, "/stats", parameters, null);
+    public ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
+        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
 
     public <T> ResponseEntity<Object> post(String path, T body) {
