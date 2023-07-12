@@ -31,4 +31,8 @@ public interface ExceptionMessages {
     String COMPILATION_NOT_FOUND = "Compilation not found";
     String COMPILATION_TITLE_LENGTH_INVALID = "Compilation title is too short or too long";
     String UNKNOWN_STATE_ACTION = "Unknown state action";
+
+    String COMMENT_LENGTH_INVALID = "Comment length is too short or too long";
+    String COMMENT_NOT_FOUND = "Comment not found";
+    String COMMENT_AUTHOR_WRONG = "Comment author is wrong";
 }
